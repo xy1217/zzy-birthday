@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>生日蛋糕动画</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Roboto:wght@400&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Roboto', sans-serif;
+            background-color: #ffd3b6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .page {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: #8B4513;
+            text-align: center;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 10;
+            transform: translateY(-50px);
+        }
+
+        .birthday-message-top {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2em;
+            color: #D2691E;
+            z-index: 15;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .main-cake {
+            font-size: 5em;
+            animation: dropAndBounce 1.5s ease-out forwards;
+            font-family: 'Dancing Script', cursive;
+            z-index: 10;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .birthday-message-bottom {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5em;
+            color: #D2691E;
+            margin-top: 0;
+            z-index: 15;
+            position: relative;
+        }
+
+        .falling-cake {
+            position: absolute;
+            top: -50px;
+            font-size: 1.5em;
+            animation: fall linear infinite;
+            z-index: 1;
+        }
+
+        .running-dog {
+            position: absolute;
+            bottom: 20px;
+            font-size: 2em;
+            animation: runDog linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes dropAndBounce {
+            0% { transform: translateY(-100vh); }
+            70% { transform: translateY(0); }
+            80% { transform: translateY(-15px); }
+            90% { transform: translateY(0); }
+            100% { transform: translateY(-8px); }
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100vh); }
+        }
+
+        @keyframes runDog {
+            0% { transform: translateX(100vw); }
+            100% { transform: translateX(-100vw); }
+        }
+
+        /* 新增“下一页”按钮的样式 */
+        #nextPageBtn {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background-color: #D2691E;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 5px;
+            z-index: 20;
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="birthday-message-top">Happy Birthday!</div>
+        <div class="main-cake">🎂</div>
+        <div class="birthday-message-bottom">🎉✨让一让，让一让✨🎉<br>我的梓茵宝贝要过生日啦！</div>
+    </div>
+
+    <!-- 新增“下一页”按钮 -->
+    <button id="nextPageBtn">下一页</button>
+
+    <script>
+        let maxFallingCakes = 5;
+        let maxRunningDogs = 3;
+
+        function startFallingCakes() {
+            setInterval(() => {
+                if (document.querySelectorAll('.falling-cake').length < maxFallingCakes) {
+                    const cake = document.createElement("div");
+                    cake.classList.add("falling-cake");
+                    cake.textContent = "🧁";
+
+                    cake.style.left = Math.random() * 100 + "vw";
+                    cake.style.animationDuration = (Math.random() * 2 + 3) + "s";
+                    document.body.appendChild(cake);
+
+                    cake.addEventListener("animationend", () => {
+                        cake.remove();
+                    });
+                }
+            }, 1000);
+        }
+
+        function startRunningDogs() {
+            setInterval(() => {
+                if (document.querySelectorAll('.running-dog').length < maxRunningDogs) {
+                    const dog = document.createElement("div");
+                    dog.classList.add("running-dog");
+                    dog.textContent = "🐕";
+
+                    dog.style.right = "-10vw";
+                    dog.style.animationDuration = (Math.random() * 4 + 6) + "s";
+                    document.body.appendChild(dog);
+
+                    dog.addEventListener("animationend", () => {
+                        dog.remove();
+                    });
+                }
+            }, 5000);
+        }
+
+        document.querySelector('.main-cake').addEventListener('animationend', () => {
+            startFallingCakes();
+            startRunningDogs();
+        });
+
+        // 新增“下一页”按钮的事件监听
+        document.getElementById('nextPageBtn').addEventListener('click', () => {
+            window.location.href = 'page2.html'; // 请确保页面二的文件名为 page2.html
+        });
+    </script>
+</body>
+</html>
