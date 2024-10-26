@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>烟花动画 - 生日快乐</title>
+    <style>
+        body, html {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+        }
+        #canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1; /* 让 canvas 在文字下面 */
+        }
+        .birthday-message {
+            position: absolute;
+            font-size: 12vw; /* 使用相对单位，适配手机和桌面 */
+            font-weight: bold;
+            color: white;
+            top: 30%;
+            text-align: center;
+            width: 100%;
+            letter-spacing: 1vw; /* 相对单位，适配字母间距 */
+            text-shadow: 0px 0px 1px rgba(255, 255, 255, 0.6),
+                         0px 0px 1px rgba(255, 255, 255, 0.4);
+            background: linear-gradient(90deg, #ffffff, #e5e5e5);
+            -webkit-background-clip: text;
+            color: transparent;
+            filter: drop-shadow(0 0 1px #ffffff) drop-shadow(0 0 1px #ffffff);
+            z-index: 2; /* 让文字显示在最顶层 */
+            pointer-events: none; /* 避免点击时影响烟花生成 */
+        }
+    </style>
+</head>
+<body>
+    <div class="birthday-message">生日快乐 ❤️</div>
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        
+        // 初始化和调整画布大小
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class Firework {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.particles = [];
+                for (let i = 0; i < 60; i++) { // 降低每个烟花中的粒子数量
+                    this.particles.push(new Particle(this.x, this.y, this.color));
+                }
+            }
+
+            update() {
+                this.particles.forEach(particle => particle.update());
+            }
+
+            draw() {
+                this.particles.forEach(particle => particle.draw());
+            }
+        }
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.angle = Math.random() * 2 * Math.PI;
+                this.speed = Math.random() * 3 + 2; // 减小速度，避免过多散开
+                this.alpha = 1;
+                this.gravity = 0.05;
+                this.vx = Math.cos(this.angle) * this.speed;
+                this.vy = Math.sin(this.angle) * this.speed;
+            }
+
+            update() {
+                this.vx *= 0.98;
+                this.vy *= 0.98;
+                this.vy += this.gravity;
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= 0.015; // 增加粒子消失速度
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        const fireworks = [];
+
+        function animate() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            fireworks.forEach((firework, index) => {
+                firework.update();
+                firework.draw();
+                if (firework.particles[0].alpha <= 0) {
+                    fireworks.splice(index, 1);
+                }
+            });
+            requestAnimationFrame(animate);
+        }
+
+        function createRandomFirework() {
+            const x = Math.random() * canvas.width;
+            const y = Math.random() * canvas.height * 0.6;
+            const color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+            fireworks.push(new Firework(x, y, color));
+        }
+
+        // 降低自动生成烟花的频率
+        setInterval(createRandomFirework, 500);
+
+        // 保留点击触发烟花
+        canvas.addEventListener('click', (event) => {
+            const x = event.clientX;
+            const y = event.clientY;
+            const color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+            fireworks.push(new Firework(x, y, color));
+        });
+
+        animate();
+    </script>
+</body>
+</html>
+
+

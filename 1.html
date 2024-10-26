@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>生日蛋糕动画</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Roboto:wght@400&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Roboto', sans-serif;
+            background-color: #ffd3b6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .page {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: #8B4513;
+            text-align: center;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 10; /* 确保在最上层 */
+            transform: translateY(-50px); /* 整体向上移动 */
+        }
+
+        .birthday-message-top {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2em; 
+            color: #D2691E;
+            z-index: 15; /* 确保在最上层 */
+            position: relative;
+            margin-bottom: 20px; /* 增加与蛋糕的间距 */
+        }
+
+        .main-cake {
+            font-size: 5em; 
+            animation: dropAndBounce 1.5s ease-out forwards;
+            font-family: 'Dancing Script', cursive;
+            z-index: 10; /* 确保在文字之下 */
+            position: relative;
+            margin-bottom: 20px; /* 增加与下方祝福语的间距 */
+        }
+
+        .birthday-message-bottom {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5em; /* 缩小字体以适应屏幕 */
+            color: #D2691E;
+            margin-top: 0; 
+            z-index: 15; /* 确保在最上层 */
+            position: relative;
+        }
+
+        .falling-cake {
+            position: absolute;
+            top: -50px;
+            font-size: 1.5em;
+            animation: fall linear infinite;
+            z-index: 1; /* 确保小蛋糕在底层 */
+        }
+
+        .running-dog {
+            position: absolute;
+            bottom: 20px;
+            font-size: 2em;
+            animation: runDog linear infinite;
+            z-index: 1; /* 确保小狗在底层 */
+        }
+
+        @keyframes dropAndBounce {
+            0% { transform: translateY(-100vh); }
+            70% { transform: translateY(0); }
+            80% { transform: translateY(-15px); }
+            90% { transform: translateY(0); }
+            100% { transform: translateY(-8px); }
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100vh); }
+        }
+
+        @keyframes runDog {
+            0% { transform: translateX(100vw); }
+            100% { transform: translateX(-100vw); }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="birthday-message-top">Happy Birthday!</div>
+        <div class="main-cake">🎂</div>
+        <div class="birthday-message-bottom">🎉✨让一让，让一让✨🎉<br>我的梓茵宝贝要过生日啦！</div>
+    </div>
+
+    <script>
+        let maxFallingCakes = 5;
+        let maxRunningDogs = 3;
+
+        function startFallingCakes() {
+            setInterval(() => {
+                if (document.querySelectorAll('.falling-cake').length < maxFallingCakes) {
+                    const cake = document.createElement("div");
+                    cake.classList.add("falling-cake");
+                    cake.textContent = "🧁";
+
+                    // 随机位置生成小蛋糕
+                    cake.style.left = Math.random() * 100 + "vw";
+                    cake.style.animationDuration = (Math.random() * 2 + 3) + "s";
+                    document.body.appendChild(cake);
+
+                    cake.addEventListener("animationend", () => {
+                        cake.remove();
+                    });
+                }
+            }, 1000); // 每秒检查并生成一个新的小蛋糕
+        }
+
+        function startRunningDogs() {
+            setInterval(() => {
+                if (document.querySelectorAll('.running-dog').length < maxRunningDogs) {
+                    const dog = document.createElement("div");
+                    dog.classList.add("running-dog");
+                    dog.textContent = "🐕";
+
+                    dog.style.right = "-10vw";
+                    dog.style.animationDuration = (Math.random() * 4 + 6) + "s";
+                    document.body.appendChild(dog);
+
+                    dog.addEventListener("animationend", () => {
+                        dog.remove();
+                    });
+                }
+            }, 5000); // 每隔5秒检查并生成一只小狗
+        }
+
+        document.querySelector('.main-cake').addEventListener('animationend', () => {
+            startFallingCakes();
+            startRunningDogs();
+        });
+    </script>
+</body>
+</html>
+
